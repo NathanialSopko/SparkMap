@@ -42,14 +42,39 @@ public class Location extends AppCompatActivity implements OnMapReadyCallback{
     public Location(Activity activity) {
         this.activity = activity;
         supportMapFragment = SupportMapFragment.newInstance();
-
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        supportMapFragment.getMapAsync(this);
+        sFM = getSupportFragmentManager();
+        sFM.beginTransaction().replace(R.id.map, supportMapFragment).commit();
     }
     public SupportMapFragment getMapFrag(){
         return supportMapFragment;
     }
+    public void makeSureLocationOn(){
+        try {
+            off = Settings.Secure.getInt(getContentResolver(), Settings.Secure.LOCATION_MODE);
+        } catch (Settings.SettingNotFoundException e) {
+            e.printStackTrace();
+        }
+        if(off==0){
+            AlertDialog alertDialog = new AlertDialog.Builder(Location.this).create();
+            alertDialog.setTitle("Alert");
+            alertDialog.setMessage("Please turn on location services for SparkMap then press back on your phone, thank you.");
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                            Intent onGPS = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                            startActivity(onGPS);
+                        }
+                    });
+            alertDialog.show();
+        }
+    }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
 
     }
 }
