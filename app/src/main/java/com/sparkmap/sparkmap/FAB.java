@@ -8,7 +8,7 @@ import android.support.v4.app.FragmentActivity;
 /**
  * Created by Nate on 9/14/2017.
  */
-
+//This is a comment
 public class FAB extends FragmentActivity {
     Activity activity;
     FloatingActionMenu materialDesignFAM;
