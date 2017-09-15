@@ -77,6 +77,7 @@ public class NavDrawer  extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_map) {
+            System.out.print("for lecture");
 
         } else if (id == R.id.nav_gallery) {
 
