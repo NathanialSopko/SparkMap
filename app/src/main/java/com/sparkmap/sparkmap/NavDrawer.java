@@ -10,6 +10,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.google.android.gms.maps.SupportMapFragment;
+
 /**
  * Created by Nate on 9/14/2017.
  */
@@ -17,9 +19,13 @@ import android.view.MenuItem;
 public class NavDrawer  extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     Activity activity;
+    private Location myLocation;
+    private FAB myFab;
 
 
-    public NavDrawer(Activity activity){
+    public NavDrawer(Activity activity, Location passedLocation, FAB passedFab){
+        myLocation = passedLocation;
+        myFab = passedFab;
         this.activity=activity;
         Toolbar toolbar = (Toolbar) activity.findViewById(R.id.toolbar);
         ((AppCompatActivity) activity).setSupportActionBar( toolbar);
@@ -74,10 +80,12 @@ public class NavDrawer  extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
+
         int id = item.getItemId();
 
         if (id == R.id.nav_map) {
             System.out.print("for lecture");
+
 
         } else if (id == R.id.nav_gallery) {
 

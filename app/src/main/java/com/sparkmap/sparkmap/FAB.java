@@ -11,12 +11,13 @@ import android.support.v4.app.FragmentActivity;
 //This is a comment
 public class FAB extends FragmentActivity {
     Activity activity;
+    Location myLocation;
     FloatingActionMenu materialDesignFAM;
     FloatingActionButton floatingActionButton1, floatingActionButton2, floatingActionButton3, floatingActionButton4, floatingActionButton5, floatingActionButton6; //all of the FAB's for referencing
 
-    public FAB(Activity activity){
+    public FAB(Activity activity, Location passedLocation){
         this.activity=activity;
-        
+        myLocation = passedLocation;
         //need to assign these buttons to the actual xml id's that are in app_bar_main.xml
         materialDesignFAM = (FloatingActionMenu) activity.findViewById(R.id.social_floating_menu);
         floatingActionButton1 = (FloatingActionButton) activity.findViewById(R.id.floating_facebook);
