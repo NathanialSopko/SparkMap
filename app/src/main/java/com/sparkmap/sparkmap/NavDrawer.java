@@ -20,10 +20,12 @@ public class NavDrawer  extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     Activity activity;
     private Location myLocation;
+    private FAB myFab;
 
 
-    public NavDrawer(Activity activity, Location passedLocation){
+    public NavDrawer(Activity activity, Location passedLocation, FAB passedFab){
         myLocation = passedLocation;
+        myFab = passedFab;
         this.activity=activity;
         Toolbar toolbar = (Toolbar) activity.findViewById(R.id.toolbar);
         ((AppCompatActivity) activity).setSupportActionBar( toolbar);
@@ -78,15 +80,11 @@ public class NavDrawer  extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
-        android.support.v4.app.FragmentManager sFM = myLocation.getSFM();
+
         int id = item.getItemId();
-        SupportMapFragment supportMapFragment = myLocation.getSupportMapFragment();
-        if(supportMapFragment.isAdded()){
-            sFM.beginTransaction().hide(supportMapFragment).commit();
-        }
 
         if (id == R.id.nav_map) {
-            sFM.beginTransaction().replace(R.id.map, supportMapFragment).commit();
+
 
         } else if (id == R.id.nav_gallery) {
 
