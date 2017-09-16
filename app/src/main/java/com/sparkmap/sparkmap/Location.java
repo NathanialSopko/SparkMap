@@ -27,6 +27,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 
 import static android.R.attr.fragment;
 
+
 /**
  * Created by Nate on 9/14/2017.
  */
@@ -76,5 +77,11 @@ public class Location extends AppCompatActivity implements OnMapReadyCallback{
                 });
 
 
+    }
+    public void ActivityMethod(){
+        //writing
+        //these
+        //comments
+        //for lecture
     }
 }
