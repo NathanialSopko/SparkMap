@@ -32,7 +32,7 @@ import static android.R.attr.fragment;
  * Created by Nate on 9/14/2017.
  */
 
-public class Location extends AppCompatActivity implements OnMapReadyCallback{
+public class Location extends AppCompatActivity{
     Activity activity;
     SupportMapFragment supportMapFragment;
     android.support.v4.app.FragmentManager sFM;
@@ -40,16 +40,9 @@ public class Location extends AppCompatActivity implements OnMapReadyCallback{
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationClient;
 
-    public Location(Activity activity) {
+    public Location(Activity activity, GoogleMap googleMap) {
         //this.activity = activity;
-        supportMapFragment = SupportMapFragment.newInstance();
-        supportMapFragment.getMapAsync(Location.this);
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(activity);
-
-    }
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        System.exit(0);
         mMap = googleMap;
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -75,13 +68,5 @@ public class Location extends AppCompatActivity implements OnMapReadyCallback{
                         }
                     }
                 });
-
-
-    }
-    public void ActivityMethod(){
-        //writing
-        //these
-        //comments
-        //for lecture
     }
 }

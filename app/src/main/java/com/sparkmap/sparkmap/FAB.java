@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.view.View;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
+import com.google.android.gms.maps.GoogleMap;
+
 import android.support.v4.app.FragmentActivity;
 /**
  * Created by Nate on 9/14/2017.
@@ -15,7 +17,7 @@ public class FAB extends FragmentActivity {
     FloatingActionMenu materialDesignFAM;
     FloatingActionButton floatingActionButton1, floatingActionButton2, floatingActionButton3, floatingActionButton4, floatingActionButton5, floatingActionButton6; //all of the FAB's for referencing
 
-    public FAB(Activity activity, Location passedLocation){
+    public FAB(Activity activity, Location passedLocation, GoogleMap googleMap){
         this.activity=activity;
         myLocation = passedLocation;
         //need to assign these buttons to the actual xml id's that are in app_bar_main.xml
