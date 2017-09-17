@@ -2,6 +2,7 @@ package com.sparkmap.sparkmap;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -32,7 +33,7 @@ import static android.R.attr.fragment;
  * Created by Nate on 9/14/2017.
  */
 
-public class Location extends AppCompatActivity{
+public class Location extends AppCompatActivity {
     Activity activity;
     SupportMapFragment supportMapFragment;
     android.support.v4.app.FragmentManager sFM;
@@ -40,22 +41,16 @@ public class Location extends AppCompatActivity{
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationClient;
 
-    public Location(Activity activity, GoogleMap googleMap) {
-        //this.activity = activity;
+    public Location(MainActivity passedactivity, GoogleMap googleMap) {
+        this.activity = passedactivity;
+        passedactivity.makeSureLocationOn();
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(activity);
         mMap = googleMap;
-
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                        MY_PERMISSIONS_REQUEST_ACCESS__FINE_LOCATION);
-            }
+        if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
-        mMap.setMyLocationEnabled(true);
-
         mFusedLocationClient.getLastLocation()
-                .addOnSuccessListener(this, new OnSuccessListener<android.location.Location>() {
+                .addOnSuccessListener(activity, new OnSuccessListener<android.location.Location>() {
                     @Override
                     public void onSuccess(android.location.Location location) {
                         // Got last known location. In some rare situations this can be null.
@@ -69,4 +64,9 @@ public class Location extends AppCompatActivity{
                     }
                 });
     }
+
+
 }
+
+
+
