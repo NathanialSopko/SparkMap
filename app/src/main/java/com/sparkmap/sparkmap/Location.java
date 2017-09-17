@@ -34,7 +34,7 @@ import static android.R.attr.fragment;
  */
 
 public class Location extends AppCompatActivity {
-    Activity activity;
+    MainActivity activity;
     SupportMapFragment supportMapFragment;
     android.support.v4.app.FragmentManager sFM;
     private static final int MY_PERMISSIONS_REQUEST_ACCESS__FINE_LOCATION = 101;
@@ -43,7 +43,7 @@ public class Location extends AppCompatActivity {
 
     public Location(MainActivity passedactivity, GoogleMap googleMap) {
         this.activity = passedactivity;
-        passedactivity.makeSureLocationOn();
+        makeSureLocationOn();
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(activity);
         mMap = googleMap;
         if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -65,7 +65,31 @@ public class Location extends AppCompatActivity {
                 });
     }
 
+    public void makeSureLocationOn() {
+        final LocationManager manager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
 
+        if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            buildAlertMessageNoGps();
+        }
+    }
+
+    private void buildAlertMessageNoGps() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        builder.setMessage("Your GPS seems to be disabled, do you want to enable it?")
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                        startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                        dialog.cancel();
+                    }
+                });
+        final AlertDialog alert = builder.create();
+        alert.show();
+    }
 }
 
 
