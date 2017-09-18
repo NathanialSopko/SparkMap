@@ -47,8 +47,13 @@ public class Location extends AppCompatActivity {
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(activity);
         mMap = googleMap;
         if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        MY_PERMISSIONS_REQUEST_ACCESS__FINE_LOCATION);
+            }
             return;
         }
+        mMap.setMyLocationEnabled(true);//adds the button to snap to your location on the top right hand side of the map
         mFusedLocationClient.getLastLocation()
                 .addOnSuccessListener(activity, new OnSuccessListener<android.location.Location>() {
                     @Override
