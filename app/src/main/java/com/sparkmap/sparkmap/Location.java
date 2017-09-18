@@ -2,6 +2,7 @@ package com.sparkmap.sparkmap;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -32,37 +33,29 @@ import static android.R.attr.fragment;
  * Created by Nate on 9/14/2017.
  */
 
-public class Location extends AppCompatActivity implements OnMapReadyCallback{
-    Activity activity;
+public class Location extends AppCompatActivity {
+    MainActivity activity;
     SupportMapFragment supportMapFragment;
     android.support.v4.app.FragmentManager sFM;
     private static final int MY_PERMISSIONS_REQUEST_ACCESS__FINE_LOCATION = 101;
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationClient;
 
-    public Location(Activity activity) {
-        //this.activity = activity;
-        supportMapFragment = SupportMapFragment.newInstance();
-        supportMapFragment.getMapAsync(Location.this);
+    public Location(MainActivity passedactivity, GoogleMap googleMap) {
+        this.activity = passedactivity;
+        makeSureLocationOn();
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(activity);
-
-    }
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        System.exit(0);
         mMap = googleMap;
-
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                         MY_PERMISSIONS_REQUEST_ACCESS__FINE_LOCATION);
             }
             return;
         }
-        mMap.setMyLocationEnabled(true);
-
+        mMap.setMyLocationEnabled(true);//adds the button to snap to your location on the top right hand side of the map
         mFusedLocationClient.getLastLocation()
-                .addOnSuccessListener(this, new OnSuccessListener<android.location.Location>() {
+                .addOnSuccessListener(activity, new OnSuccessListener<android.location.Location>() {
                     @Override
                     public void onSuccess(android.location.Location location) {
                         // Got last known location. In some rare situations this can be null.
@@ -75,13 +68,34 @@ public class Location extends AppCompatActivity implements OnMapReadyCallback{
                         }
                     }
                 });
-
-
     }
-    public void ActivityMethod(){
-        //writing
-        //these
-        //comments
-        //for lecture
+
+    public void makeSureLocationOn() {
+        final LocationManager manager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
+
+        if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            buildAlertMessageNoGps();
+        }
+    }
+
+    private void buildAlertMessageNoGps() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        builder.setMessage("Your GPS seems to be disabled, do you want to enable it?")
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                        startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                        dialog.cancel();
+                    }
+                });
+        final AlertDialog alert = builder.create();
+        alert.show();
     }
 }
+
+
+
