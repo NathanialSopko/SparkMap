@@ -1,6 +1,7 @@
 package com.sparkmap.sparkmap;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
@@ -18,7 +19,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        Intent logInt = new Intent(this, LoginActivity.class);
+        startActivity(logInt);
         /**
          * I need the next 4 lines here and the onMapReady function because when I move it to the location
          * function and just call new location there it breaks.
