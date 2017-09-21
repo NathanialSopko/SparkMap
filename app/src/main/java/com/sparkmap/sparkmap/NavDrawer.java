@@ -7,10 +7,23 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.SupportMapFragment;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Iterator;
 
 /**
  * Created by Nate on 9/14/2017.
@@ -23,7 +36,7 @@ public class NavDrawer  extends AppCompatActivity
     private FAB myFab;
 
 
-    public NavDrawer(Activity activity, Location passedLocation, FAB passedFab){
+    public NavDrawer(Activity activity, Location passedLocation, FAB passedFab, String userData){
         myLocation = passedLocation;
         myFab = passedFab;
         this.activity=activity;
@@ -37,9 +50,34 @@ public class NavDrawer  extends AppCompatActivity
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
+
+
+
         NavigationView navigationView = (NavigationView) activity.findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        try {
+            loadUserData(navigationView, userData);
+        } catch (JSONException e) {
+            Log.d("logIn", "didnt work");
+            e.printStackTrace();
+        }
     }
+    public void loadUserData(NavigationView navigationView, String userData) throws JSONException {
+
+        JSONObject reader = new JSONObject(userData);
+        String userName = (String) reader.get("userName");
+        String userEmail = (String) reader.get("userEmail");
+        View hView =  navigationView.getHeaderView(0);
+        TextView nav_user = (TextView)hView.findViewById(R.id.userName);
+        TextView nav_userEmail = (TextView)hView.findViewById(R.id.userEmail);
+        nav_user.setText(userName);
+        nav_userEmail.setText(userEmail);
+        Log.d("logIn", userName);
+
+    }
+
+    //https://stackoverflow.com/questions/13814503/reading-a-json-file-in-android/13814551#13814551
+
 
     @Override
     public void onBackPressed() {
@@ -87,11 +125,9 @@ public class NavDrawer  extends AppCompatActivity
             System.out.print("for lecture");
 
 
-        } else if (id == R.id.nav_gallery) {
+        } else if (id == R.id.nav_profile) {
 
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
+        } else if (id == R.id.nav_tools) {
 
         } else if (id == R.id.nav_share) {
 
