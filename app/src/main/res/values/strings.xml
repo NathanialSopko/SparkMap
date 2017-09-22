@@ -18,6 +18,7 @@
     <string name="error_invalid_password">This password is too short</string>
     <string name="error_incorrect_password">The password is incorrect</string>
     <string name="error_field_required">This field is required</string>
+    <string name="auth_failed">Sign in/sign up error</string>
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
