@@ -1,30 +1,27 @@
 package com.sparkmap.sparkmap;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
 import android.os.Build;
-import android.provider.Settings;
-import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
+
+import java.util.HashMap;
 
 import static android.R.attr.fragment;
 
@@ -40,34 +37,20 @@ public class Location extends AppCompatActivity {
     private static final int MY_PERMISSIONS_REQUEST_ACCESS__FINE_LOCATION = 101;
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationClient;
+    private HashMap<String, String> markerMap;
+    private Map mapClass;
 
     public Location(MainActivity passedactivity, GoogleMap googleMap) {
+
+        markerMap = new HashMap<String, String>();
         this.activity = passedactivity;
         makeSureLocationOn();
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(activity);
         mMap = googleMap;
-        if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                        MY_PERMISSIONS_REQUEST_ACCESS__FINE_LOCATION);
-            }
-            return;
-        }
-        mMap.setMyLocationEnabled(true);//adds the button to snap to your location on the top right hand side of the map
-        mFusedLocationClient.getLastLocation()
-                .addOnSuccessListener(activity, new OnSuccessListener<android.location.Location>() {
-                    @Override
-                    public void onSuccess(android.location.Location location) {
-                        // Got last known location. In some rare situations this can be null.
-                        if (location != null) {
-                            float lat = (float) (location.getLatitude());
-                            float lng = (float) (location.getLongitude());
-                            LatLng CurrentLocation = new LatLng(lat, lng);
-                            float zoomLevel = (float) 14.0;
-                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(CurrentLocation, zoomLevel));
-                        }
-                    }
-                });
+        mapClass = new Map(mMap, this, passedactivity);
+        mapClass.centerCam();
+        FAB myFab = new FAB(activity, this, mMap, mapClass);//Creates an instance of FAB that adds the floating action buttons to the main activity
+
     }
 
     public void makeSureLocationOn() {
@@ -95,6 +78,17 @@ public class Location extends AppCompatActivity {
         final AlertDialog alert = builder.create();
         alert.show();
     }
+
+    public FusedLocationProviderClient getFusedLocationClient(){
+        return mFusedLocationClient;
+    }
+
+    public MainActivity getActivity() {return activity;}
+
+    public HashMap<String, String> getMarkerMap(){
+        return markerMap;
+    }
+
 }
 
 
