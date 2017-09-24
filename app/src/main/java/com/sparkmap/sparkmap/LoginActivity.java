@@ -33,9 +33,6 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,10 +61,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
-
+    /*
     //Firebase vars
     private FirebaseAuth mAuth; //FirebaseAuth Object
     private FirebaseAuth.AuthStateListener mAuthListener; //AuthStateListener object
+    */
     private static final String TAG = "LoginActivity"; //TAG Object
 
 
@@ -101,7 +99,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
-
+        /*
         //firebase
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
@@ -117,8 +115,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 }
                 // ...
             }
-        };
+        };*/
     }
+    /*
     //Firebase on Start
     @Override
     public void onStart() {
@@ -126,7 +125,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         //FirebaseUser currentUser = mAuth.getCurrentUser();
         mAuth.addAuthStateListener(mAuthListener);
     }
-
+    */
     private void populateAutoComplete() {
 
     }
@@ -301,6 +300,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         @Override
         protected Boolean doInBackground(Void... params) {
+            /*
             // Firebase attempt authentication against a network service.
             mAuth.signInWithEmailAndPassword(mEmail, mPassword)
                     .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
@@ -321,7 +321,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
                             // ...
                         }
-                    });
+                    });*/
 
             try {
                 // Simulate network access.
@@ -388,7 +388,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         *forces a user to login, can not skip this step
         */
     }
-
+    /*
     //firebase on stop
     @Override
     public void onStop() {
@@ -396,7 +396,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         if (mAuthListener != null) {
             mAuth.removeAuthStateListener(mAuthListener);
         }
-    }
+    }*/
 
 }
 
