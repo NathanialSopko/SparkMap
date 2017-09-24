@@ -34,38 +34,38 @@ public class FAB extends FragmentActivity {
         floatingActionButton1.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 //TODO something when floating action menu first item clicked
-                System.exit(0);
+                //System.exit(0);
             }
         });
         floatingActionButton2.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 //TODO something when floating action menu second item clicked
-                System.exit(0);
+                //System.exit(0);
             }
         });
         floatingActionButton3.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 //TODO something when floating action menu third item clicked
-                System.exit(0);
+                //System.exit(0);
             }
         });
 
         floatingActionButton4.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 //TODO something when floating action menu first item clicked
-                System.exit(0);
+                //System.exit(0);
             }
         });
         floatingActionButton5.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 //TODO something when floating action menu second item clicked
-                System.exit(0);
+                //System.exit(0);
             }
         });
         floatingActionButton6.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 //TODO something when floating action menu third item clicked
-                System.exit(0);
+                //System.exit(0);
             }
         });
     }
