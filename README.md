@@ -2,8 +2,9 @@
 For Users:<br />
 1)Download the sparkmap.apk(https://drive.google.com/file/d/0B4a4hUxiH47PUURMUWZtQzRRa0E/view?usp=sharing<br />
 2)Once the .apk has finished downloading install the app on your phone<br />
-3)Once installed, run the app<br />
-4)To login enter the email "paul@gmail.com" and the password "password"<br />
+3)Once installed, it is required that you go to Settings > Applications > SparkMap and allow location services
+4)Then run the app<br />
+5)To login enter the email "paul@gmail.com" and the password "password"<br />
 <br />
 For Developers:<br />
 1)Download andorid studios<br />
