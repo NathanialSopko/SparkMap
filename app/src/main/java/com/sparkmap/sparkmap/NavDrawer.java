@@ -1,6 +1,7 @@
 package com.sparkmap.sparkmap;
 
 import android.app.Activity;
+import android.app.FragmentManager;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -32,12 +33,14 @@ import java.util.Iterator;
 public class NavDrawer  extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     Activity activity;
+    SupportMapFragment _supportMapFragment;
     private Location myLocation;
     private FAB myFab;
 
 
-    public NavDrawer(Activity activity, Location passedLocation, FAB passedFab, String userData){
+    public NavDrawer(Activity activity, Location passedLocation, FAB passedFab, String userData, SupportMapFragment supportMapFragment){
         myLocation = passedLocation;
+        _supportMapFragment = supportMapFragment;
         myFab = passedFab;
         this.activity=activity;
         Toolbar toolbar = (Toolbar) activity.findViewById(R.id.toolbar);
@@ -122,7 +125,6 @@ public class NavDrawer  extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_map) {
-            System.out.print("for lecture");
 
 
         } else if (id == R.id.nav_profile) {

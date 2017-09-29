@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         //-----------------------------------------------------------------------
         //myLocation = new Location(this);
         FAB myFab = new FAB(this, myLocation, mMap); //Creates an instance of FAB that adds the floating action buttons to the main activity
-        NavDrawer myNavDrawer = new NavDrawer(this, myLocation, myFab, userData); //Creates an instance of NavDrawer that adds the navigation drawer to the main activity
+        NavDrawer myNavDrawer = new NavDrawer(this, myLocation, myFab, userData, supportMapFragment); //Creates an instance of NavDrawer that adds the navigation drawer to the main activity
 
         //
 
