@@ -27,6 +27,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -55,6 +56,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * Keep track of the login task to ensure we can cancel it if requested.
      */
     private UserLoginTask mAuthTask = null;
+    private Boolean isNewUser = false;
 
     // UI references.
     private AutoCompleteTextView mEmailView;
@@ -67,7 +69,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private FirebaseAuth.AuthStateListener mAuthListener; //AuthStateListener object
     */
     private static final String TAG = "LoginActivity"; //TAG Object
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,12 +91,18 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         });
 
         Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
+        final CheckBox newUserCheckBox = (CheckBox) findViewById(R.id.isNewUserCheckBox);
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                attemptLogin();
+                if(!newUserCheckBox.isChecked()) {
+                    attemptLogin();
+                }else{
+                    attemptNewUser();
+                }
             }
         });
+
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
@@ -136,6 +143,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * If there are form errors (invalid email, missing fields, etc.), the
      * errors are presented and no actual login attempt is made.
      */
+    private void attemptNewUser(){
+        //TODO 
+    }
     private void attemptLogin() {
         if (mAuthTask != null) {
             return;
