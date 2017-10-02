@@ -50,7 +50,6 @@ public class Location extends AppCompatActivity {
         mapClass = new Map(mMap, this, passedactivity);
         mapClass.centerCam();
         FAB myFab = new FAB(activity, this, mMap, mapClass);//Creates an instance of FAB that adds the floating action buttons to the main activity
-
     }
 
     public void makeSureLocationOn() {

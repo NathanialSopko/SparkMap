@@ -54,21 +54,23 @@ public class Map extends AppCompatActivity implements OnInfoWindowClickListener 
      *
      * @param lat this is a latitude reading that will be passed in
      * @param lng this is a longitude reading that will be passed in
-     * @param username this is the unique username of the user to pull
+     * @param title this is the title of the spark
+     * @param snippet this is the description of the spark
      *
      *                 This method should simply take in a latitude and longitude and add a marker to the map in that spot.
      *                 Then it should save that marker in the markerMap hashmap so that we know it was added (username, (lat,lng)).
      */
-    public void addMapMarker(float lat, float lng, String username, String snippet){
+    public void addMapMarker(float lat, float lng, String title, String snippet){
         LatLng currentLocation = new LatLng(lat, lng);
         mMap.addMarker(new MarkerOptions().position(currentLocation)
-                .title(username)
+                .title(title)
                 .snippet(snippet));
         String s = Float.toString(lat);
         s = s+"\n";
         s = s + Float.toString(lng);
         s = s+"\n";
-        mMarkerMap.put(username,s);
+        mMarkerMap.put(title,s);
+        //add this to database based on latitude and longitude
     }
 
 
@@ -84,6 +86,7 @@ public class Map extends AppCompatActivity implements OnInfoWindowClickListener 
         }
         if(firstRun == true) {
             mMap.setMyLocationEnabled(true);
+            mMap.getUiSettings().setMapToolbarEnabled(false);
             mMap.getUiSettings().setMyLocationButtonEnabled(false);
             firstRun = false;
         }
@@ -147,6 +150,11 @@ public class Map extends AppCompatActivity implements OnInfoWindowClickListener 
                                 public void onClick(DialogInterface dialog, int which) {
                                     String m_title = Title.getText().toString();
                                     String m_snippet = snippet.getText().toString();
+                                    //get the username associated to the user making the post
+                                    //FirebaseUser user = firebaseAuth.getCurrentUser();
+                                    //String username = databaseReference.child(user.getUid().getValue(userName);
+                                    //String currentDateTime  = get current date and time;
+                                    //m_snippet += ("\n - " + username + " at " currentDateTime;
                                     addMapMarker(lat,lng,m_title,m_snippet);
                                 }
                             });
@@ -174,5 +182,6 @@ public class Map extends AppCompatActivity implements OnInfoWindowClickListener 
     public void writeSparkToDatabase(){
         //TODO: make this method write the new spark to database when it is made
     }
+
 
 }
