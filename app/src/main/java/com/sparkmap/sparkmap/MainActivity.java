@@ -11,6 +11,8 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
     SupportMapFragment supportMapFragment;
@@ -23,6 +25,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //Retrieve an instance of your database using getInstance()
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        //You can save a range of data types to the database this way, including Java objects.
+        DatabaseReference myRef = database.getReference("message");
+        // Write a message to the database
+        myRef.setValue("Hello, World!");
+
         //begin login activity
         Intent logInt = new Intent(this, LoginActivity.class);
         startActivity(logInt);
