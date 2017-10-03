@@ -67,21 +67,24 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@android:drawable/ic_menu_edit"
-            fab:fab_size="mini" />
+            fab:fab_size="mini"
+            fab:fab_label="Spark!"/>
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/floating_refresh"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@android:drawable/ic_menu_rotate"
-            fab:fab_size="mini" />
+            fab:fab_size="mini"
+            fab:fab_label="Refresh Sparks"/>
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/floating_compass"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@android:drawable/ic_menu_mylocation"
-            fab:fab_size="mini" />
+            fab:fab_size="mini"
+            fab:fab_label="Center Screen"/>
 
     </com.github.clans.fab.FloatingActionMenu>
 
