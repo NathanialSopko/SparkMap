@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         //You can save a range of data types to the database this way, including Java objects.
         DatabaseReference myRef = database.getReference("message");
         // Write a message to the database
-        myRef.setValue("Hello, World!");
+        //myRef.setValue("Hello, World!");
 
         //begin login activity
         Intent logInt = new Intent(this, LoginActivity.class);
