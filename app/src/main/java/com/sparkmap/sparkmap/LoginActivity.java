@@ -34,6 +34,9 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,25 +52,26 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * A dummy authentication store containing known user names and passwords.
      * TODO: remove after connecting to a real authentication system.
      */
-    private static final String[] DUMMY_CREDENTIALS = new String[]{
-            "paul@gmail.com:password"
-    };
+    //private static final String[] DUMMY_CREDENTIALS = new String[]{
+    //        "paul@gmail.com:password"
+    //};
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
     private UserLoginTask mAuthTask = null;
     private Boolean isNewUser = false;
 
+
     // UI references.
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
-    /*
+
     //Firebase vars
     private FirebaseAuth mAuth; //FirebaseAuth Object
     private FirebaseAuth.AuthStateListener mAuthListener; //AuthStateListener object
-    */
+
     private static final String TAG = "LoginActivity"; //TAG Object
 
     @Override
@@ -77,6 +81,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
         populateAutoComplete();
+
+        //firebase
+        mAuth = FirebaseAuth.getInstance();
 
         mPasswordView = (EditText) findViewById(R.id.password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -106,7 +113,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
-        /*
+
         //firebase
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
@@ -122,17 +129,17 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 }
                 // ...
             }
-        };*/
+        };
     }
-    /*
-    //Firebase on Start
+    //On start (Firebase)
     @Override
     public void onStart() {
         super.onStart();
-        //FirebaseUser currentUser = mAuth.getCurrentUser();
+        // Check if user is signed in (non-null)
         mAuth.addAuthStateListener(mAuthListener);
+        FirebaseUser currentUser = mAuth.getCurrentUser();
     }
-    */
+
     private void populateAutoComplete() {
 
     }
@@ -302,6 +309,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         private final String mEmail;
         private final String mPassword;
+        private boolean auth;
 
         UserLoginTask(String email, String password) {
             mEmail = email;
@@ -310,7 +318,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            /*
             // Firebase attempt authentication against a network service.
             mAuth.signInWithEmailAndPassword(mEmail, mPassword)
                     .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
@@ -320,18 +327,21 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                                 // Sign in success, update UI with the signed-in user's information
                                 Log.d(TAG, "signInWithEmail:success");
                                 FirebaseUser user = mAuth.getCurrentUser();
+                                Toast.makeText(LoginActivity.this, "auth is a success.", Toast.LENGTH_SHORT).show();
+                                auth = true;
                                 //updateUI(user);
                             } else {
                                 // If sign in fails, display a message to the user.
                                 Log.w(TAG, "signInWithEmail:failure", task.getException());
                                 Toast.makeText(LoginActivity.this, "Authentication failed.",
                                         Toast.LENGTH_SHORT).show();
+                                auth = false;
                                 //updateUI(null);
                             }
 
                             // ...
                         }
-                    });*/
+                    });
 
             try {
                 // Simulate network access.
@@ -339,36 +349,22 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             } catch (InterruptedException e) {
                 return false;
             }
-
+            /*
             for (String credential : DUMMY_CREDENTIALS) {
                 String[] pieces = credential.split(":");
                 if (pieces[0].equals(mEmail)) {
                     // Account exists, return true if the password matches.
                     return pieces[1].equals(mPassword);
                 }
+            }*/
+            if(auth){
+                return true;
             }
-
-            /**Firebase register the new account here.
-             mAuth.createUserWithEmailAndPassword(mEmail, mPassword)
-             .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-            Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
-
-            // If sign in fails, display a message to the user. If sign in succeeds
-            // the auth state listener will be notified and logic to handle the
-            // signed in user can be handled in the listener.
-            if (!task.isSuccessful()) {
-            Toast.makeText(LoginActivity.this, R.string.auth_failed,
-            Toast.LENGTH_SHORT).show();
+            else{
+                return false;
             }
-
-            // ...
-            }
-            });
-             */
-            return false;
         }
+
 
         @Override
         protected void onPostExecute(final Boolean success) {
@@ -398,7 +394,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         *forces a user to login, can not skip this step
         */
     }
-    /*
+
     //firebase on stop
     @Override
     public void onStop() {
@@ -406,7 +402,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         if (mAuthListener != null) {
             mAuth.removeAuthStateListener(mAuthListener);
         }
-    }*/
+    }
 
 }
 
