@@ -8,8 +8,11 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
+import android.text.format.DateFormat;
+import android.util.Log;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -20,8 +23,18 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
+import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * Created by Nate on 9/20/2017.
@@ -37,18 +50,82 @@ public class Map extends AppCompatActivity implements OnInfoWindowClickListener 
     float lat;
     float lng;
     private boolean firstRun = true;
+    private FirebaseDatabase database;
     public Map(GoogleMap passedMap, Location passedLocation, MainActivity passedActivity){
         mMap = passedMap;
         mLocation = passedLocation;
         mMarkerMap = mLocation.getMarkerMap();
         mMap.setOnInfoWindowClickListener(this);
         mainActivity = passedActivity;
+        database = FirebaseDatabase.getInstance();
     }
 
     @Override
     public void onInfoWindowClick(Marker marker) {
-        Toast.makeText(mainActivity, "This message", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(mainActivity, "This message", Toast.LENGTH_SHORT).show();
+        AlertDialog.Builder builder = new AlertDialog.Builder(mainActivity);
+        builder.setTitle("View Spark");
+        final TextView Title = new TextView(mainActivity);
+        Title.setText(marker.getTitle());
+        final TextView snippet = new TextView(mainActivity);
+        snippet.setText(marker.getSnippet());
+        LinearLayout ll = new LinearLayout(mainActivity);
+        ll.setOrientation(LinearLayout.VERTICAL);
+        ll.addView(Title);
+        ll.addView(snippet);
+        builder.setView(ll);
+        builder.setPositiveButton("Close", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        builder.show();
     }
+
+
+    public void writeSparkToDatabase(){
+        //TODO: make this method write the new spark to database when it is made
+    }
+
+    /**
+     *@param input is the string value from the database
+     *This method takes in data from the database and parses it out into values for the google map markers
+     *
+     */
+    public void parseSpark(String input){
+        String[] parts = input.split(",");
+        float lat = Float.parseFloat(parts[0]);
+        float lng = Float.parseFloat(parts[1]);
+        String title = parts[2];
+        String snippet = parts[3];
+        addMapMarker(lat,lng,title,snippet, false);
+    }
+
+    /**
+     * Refresh Sparks is used to pull all of the sparks from the database into the current map and refresh
+     * all of the others on the screen currently
+     */
+
+    public void refreshSparks(){
+        mMap.clear();
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("Sparks");
+        ref.addListenerForSingleValueEvent(
+                new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            String dbString = (String)snapshot.getValue();
+                            parseSpark(dbString);
+                        }
+                    }
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Toast.makeText(mainActivity,"Error loading Sparks", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
 
     /**
      *
@@ -56,21 +133,40 @@ public class Map extends AppCompatActivity implements OnInfoWindowClickListener 
      * @param lng this is a longitude reading that will be passed in
      * @param title this is the title of the spark
      * @param snippet this is the description of the spark
+     * @param dbBool this is true if you want it to be added to the database when it is created and false by default for loading sparks
      *
      *                 This method should simply take in a latitude and longitude and add a marker to the map in that spot.
      *                 Then it should save that marker in the markerMap hashmap so that we know it was added (username, (lat,lng)).
+     *                 It will then be added to the database under the Sparks container
      */
-    public void addMapMarker(float lat, float lng, String title, String snippet){
+    public void addMapMarker(float lat, float lng, String title, String snippet, boolean dbBool){
         LatLng currentLocation = new LatLng(lat, lng);
-        mMap.addMarker(new MarkerOptions().position(currentLocation)
-                .title(title)
-                .snippet(snippet));
-        String s = Float.toString(lat);
-        s = s+"\n";
-        s = s + Float.toString(lng);
-        s = s+"\n";
-        mMarkerMap.put(title,s);
-        //add this to database based on latitude and longitude
+        if(currentLocation != null && title.length() !=0 && snippet.length()!=0){
+            mMap.addMarker(new MarkerOptions().position(currentLocation)
+                    .title(title)
+                    .snippet(snippet));
+            String s = Float.toString(lat);
+            s = s+",";
+            s = s + Float.toString(lng);
+            s = s+",";
+            s = s + title;
+            s = s+",";
+            s = s + snippet;
+            if(dbBool == true) {
+                DatabaseReference myRef = database.getReference("Sparks");
+                String key = myRef.push().getKey();
+                myRef.child(key).setValue(s);
+            }
+        }
+        else {
+            if (currentLocation == null) {
+                Toast.makeText(mainActivity, "Location cannot be determined.", Toast.LENGTH_SHORT).show();
+            } else if (title.length() == 0) {
+                Toast.makeText(mainActivity, "Title cannot be empty.", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(mainActivity, "Description cannot be empty.", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
 
@@ -88,6 +184,7 @@ public class Map extends AppCompatActivity implements OnInfoWindowClickListener 
             mMap.setMyLocationEnabled(true);
             mMap.getUiSettings().setMapToolbarEnabled(false);
             mMap.getUiSettings().setMyLocationButtonEnabled(false);
+            //refreshSparks();
             firstRun = false;
         }
         mFusedLocationClient.getLastLocation()
@@ -104,9 +201,8 @@ public class Map extends AppCompatActivity implements OnInfoWindowClickListener 
                         }
                     }
                 });
-
     }
-    public void createSpark(){
+    public void createSpark() {
         Toast.makeText(mainActivity, "Create Spark", Toast.LENGTH_SHORT).show();
         FusedLocationProviderClient mFusedLocationClient = mLocation.getFusedLocationClient();
         if (ActivityCompat.checkSelfPermission(mainActivity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(mainActivity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -132,19 +228,13 @@ public class Map extends AppCompatActivity implements OnInfoWindowClickListener 
                             Title.setHint("Title of Spark");
                             final EditText snippet = new EditText(mainActivity);
                             snippet.setHint("Describe the Spark");
-
                             Title.setInputType(InputType.TYPE_CLASS_TEXT);
                             snippet.setInputType(InputType.TYPE_CLASS_TEXT);
-
-                            //final EditText input = new EditText(mainActivity);
-                            // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
-                            LinearLayout ll=new LinearLayout(mainActivity);
+                            LinearLayout ll = new LinearLayout(mainActivity);
                             ll.setOrientation(LinearLayout.VERTICAL);
                             ll.addView(Title);
                             ll.addView(snippet);
                             builder.setView(ll);
-                            //builder.setView(input);
-                            // Set up the buttons
                             builder.setPositiveButton("Spark!", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
@@ -153,9 +243,11 @@ public class Map extends AppCompatActivity implements OnInfoWindowClickListener 
                                     //get the username associated to the user making the post
                                     //FirebaseUser user = firebaseAuth.getCurrentUser();
                                     //String username = databaseReference.child(user.getUid().getValue(userName);
-                                    //String currentDateTime  = get current date and time;
-                                    //m_snippet += ("\n - " + username + " at " currentDateTime;
-                                    addMapMarker(lat,lng,m_title,m_snippet);
+                                    SimpleDateFormat df = new SimpleDateFormat("MMM dd, HH:mm:ss");
+                                    Date currentTime = Calendar.getInstance().getTime();
+                                    String date = df.format(currentTime);
+                                    m_snippet += (" - "+date);
+                                    addMapMarker(lat, lng, m_title, m_snippet, true);
                                 }
                             });
                             builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -169,19 +261,4 @@ public class Map extends AppCompatActivity implements OnInfoWindowClickListener 
                     }
                 });
     }
-
-    public void parseSpark(){
-        //TODO: make this method parse new sparks and add them to the screen when refreshed
-
-    }
-
-    public void refreshSparks(){
-        //TODO: will most likely call parseSpark() on a lot of data pulled from database
-    }
-
-    public void writeSparkToDatabase(){
-        //TODO: make this method write the new spark to database when it is made
-    }
-
-
 }
