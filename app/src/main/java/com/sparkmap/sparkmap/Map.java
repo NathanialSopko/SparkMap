@@ -43,7 +43,6 @@ import java.util.Iterator;
 public class Map extends AppCompatActivity implements OnInfoWindowClickListener {
     private GoogleMap mMap;
     private Location mLocation;
-    private HashMap<String, String> mMarkerMap;
     private MainActivity mainActivity;
     private static final int MY_PERMISSIONS_REQUEST_ACCESS__FINE_LOCATION = 101;
     private String m_Text;
@@ -54,15 +53,22 @@ public class Map extends AppCompatActivity implements OnInfoWindowClickListener 
     public Map(GoogleMap passedMap, Location passedLocation, MainActivity passedActivity){
         mMap = passedMap;
         mLocation = passedLocation;
-        mMarkerMap = mLocation.getMarkerMap();
         mMap.setOnInfoWindowClickListener(this);
         mainActivity = passedActivity;
         database = FirebaseDatabase.getInstance();
     }
 
+    /**
+     * @param marker is the map marker object itself
+     *
+     *               This function is a simple display builder for sparks and it is handy if they are
+     *               really long either in the title or descripton department.
+     *
+     *               This function shows the title and description in a new alert dialog window if the spark
+     *               is clicked twice (expanded twice)
+     */
     @Override
     public void onInfoWindowClick(Marker marker) {
-        //Toast.makeText(mainActivity, "This message", Toast.LENGTH_SHORT).show();
         AlertDialog.Builder builder = new AlertDialog.Builder(mainActivity);
         builder.setTitle("View Spark");
         final TextView Title = new TextView(mainActivity);
@@ -83,14 +89,12 @@ public class Map extends AppCompatActivity implements OnInfoWindowClickListener 
         builder.show();
     }
 
-
-    public void writeSparkToDatabase(){
-        //TODO: make this method write the new spark to database when it is made
-    }
-
     /**
-     *This method takes in data from the database and parses it out into values for the google map markers
+     * @param input This is the spark object pulled from the database
      *
+     *              This method takes in data from the database and parses it out into values for the google map markers
+     *
+     *              The last parameter is false because we know that this came from the database so it is already stored(don't want addition of copies)
      */
     public void parseSpark(Spark input){
         addMapMarker(Float.parseFloat(input.getLat()),Float.parseFloat(input.getLng()),input.getTitle(),input.getSnippet(), false);
@@ -109,13 +113,13 @@ public class Map extends AppCompatActivity implements OnInfoWindowClickListener 
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                            Spark input = snapshot.getValue(Spark.class);
-                            parseSpark(input);
+                            parseSpark(snapshot.getValue(Spark.class));
                         }
+                        Toast.makeText(mainActivity,"Sparks refreshed!", Toast.LENGTH_SHORT).show();
                     }
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
-                        Toast.makeText(mainActivity,"Error loading Sparks", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mainActivity,"Unable to load Sparks.", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -129,8 +133,7 @@ public class Map extends AppCompatActivity implements OnInfoWindowClickListener 
      * @param dbBool this is true if you want it to be added to the database when it is created and false by default for loading sparks
      *
      *                 This method should simply take in a latitude and longitude and add a marker to the map in that spot.
-     *                 Then it should save that marker in the markerMap hashmap so that we know it was added (username, (lat,lng)).
-     *                 It will then be added to the database under the Sparks container
+     *                 If the bool is true it then adds a Spark object to the databsae and uses the server time to be the random key
      */
     public void addMapMarker(float lat, float lng, String title, String snippet, boolean dbBool){
         LatLng currentLocation = new LatLng(lat, lng);
@@ -160,7 +163,15 @@ public class Map extends AppCompatActivity implements OnInfoWindowClickListener 
         }
     }
 
-
+    /**
+     * This is our custom version of the setMyLocationButton that is included in the google map api
+     *
+     * We didn't like how that button looked in the desing of our GUI so this is a function that will be called
+     * when a user clicks our custom floating button
+     *
+     * It requests location services, then moves the current camera view over top of where you are currently
+     * according to your phone
+     */
 
     public void centerCam(){
         FusedLocationProviderClient mFusedLocationClient = mLocation.getFusedLocationClient();
@@ -182,7 +193,6 @@ public class Map extends AppCompatActivity implements OnInfoWindowClickListener 
                 .addOnSuccessListener(mainActivity, new OnSuccessListener<android.location.Location>() {
                     @Override
                     public void onSuccess(android.location.Location location) {
-                        // Got last known location. In some rare situations this can be null.
                         if (location != null) {
                             float lat = (float) (location.getLatitude());
                             float lng = (float) (location.getLongitude());
@@ -190,9 +200,21 @@ public class Map extends AppCompatActivity implements OnInfoWindowClickListener 
                             float zoomLevel = (float) 14.0;
                             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(CurrentLocation, zoomLevel));
                         }
+                        else{
+                            Toast.makeText(mainActivity,"Unable to center camera on current location.", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 });
     }
+
+    /**
+     * First part of this is getting the location permissions
+     *
+     * Second part is actually working with the location to create the spark (map marker)
+     *
+     * The alertdialog is for taking in the input for the spark and then it gets parsed and given to addMapMarker
+     * to be officially added to the map and database (denoted by the "true" parameter
+     */
 
     public void createSpark() {
         Toast.makeText(mainActivity, "Create Spark", Toast.LENGTH_SHORT).show();
@@ -232,9 +254,6 @@ public class Map extends AppCompatActivity implements OnInfoWindowClickListener 
                                 public void onClick(DialogInterface dialog, int which) {
                                     String m_title = Title.getText().toString();
                                     String m_snippet = snippet.getText().toString();
-                                    //get the username associated to the user making the post
-                                    //FirebaseUser user = firebaseAuth.getCurrentUser();
-                                    //String username = databaseReference.child(user.getUid().getValue(userName);
                                     SimpleDateFormat df = new SimpleDateFormat("MMM dd, HH:mm:ss");
                                     Date currentTime = Calendar.getInstance().getTime();
                                     String date = df.format(currentTime);

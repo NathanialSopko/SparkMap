@@ -1,29 +1,14 @@
 package com.sparkmap.sparkmap;
 
-import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.location.LocationManager;
-import android.os.Build;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.Toast;
-
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnSuccessListener;
-
-import java.util.HashMap;
-
-import static android.R.attr.fragment;
 
 
 /**
@@ -37,12 +22,9 @@ public class Location extends AppCompatActivity {
     private static final int MY_PERMISSIONS_REQUEST_ACCESS__FINE_LOCATION = 101;
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationClient;
-    private HashMap<String, String> markerMap;
     private Map mapClass;
 
     public Location(MainActivity passedactivity, GoogleMap googleMap) {
-
-        markerMap = new HashMap<String, String>();
         this.activity = passedactivity;
         makeSureLocationOn();
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(activity);
@@ -52,6 +34,12 @@ public class Location extends AppCompatActivity {
         FAB myFab = new FAB(activity, this, mMap, mapClass);//Creates an instance of FAB that adds the floating action buttons to the main activity
     }
 
+    /**
+     * This is a simple check to make sure that the location services are allowed for our app
+     *
+     * If they are not there is a simple message sent to the user
+     */
+
     public void makeSureLocationOn() {
         final LocationManager manager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
 
@@ -60,6 +48,9 @@ public class Location extends AppCompatActivity {
         }
     }
 
+    /**
+     * This alert is sent to the user if location is not available
+     */
     private void buildAlertMessageNoGps() {
         final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setMessage("Please enable your location for SparkMap. Thank you!")
@@ -78,10 +69,6 @@ public class Location extends AppCompatActivity {
     }
 
     public MainActivity getActivity() {return activity;}
-
-    public HashMap<String, String> getMarkerMap(){
-        return markerMap;
-    }
 
 }
 
