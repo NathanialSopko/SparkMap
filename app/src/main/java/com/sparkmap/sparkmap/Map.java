@@ -89,17 +89,11 @@ public class Map extends AppCompatActivity implements OnInfoWindowClickListener 
     }
 
     /**
-     *@param input is the string value from the database
      *This method takes in data from the database and parses it out into values for the google map markers
      *
      */
-    public void parseSpark(String input){
-        String[] parts = input.split(",");
-        float lat = Float.parseFloat(parts[0]);
-        float lng = Float.parseFloat(parts[1]);
-        String title = parts[2];
-        String snippet = parts[3];
-        addMapMarker(lat,lng,title,snippet, false);
+    public void parseSpark(Spark input){
+        addMapMarker(Float.parseFloat(input.getLat()),Float.parseFloat(input.getLng()),input.getTitle(),input.getSnippet(), false);
     }
 
     /**
@@ -115,8 +109,8 @@ public class Map extends AppCompatActivity implements OnInfoWindowClickListener 
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                            String dbString = (String)snapshot.getValue();
-                            parseSpark(dbString);
+                            Spark input = snapshot.getValue(Spark.class);
+                            parseSpark(input);
                         }
                     }
                     @Override
@@ -125,7 +119,6 @@ public class Map extends AppCompatActivity implements OnInfoWindowClickListener 
                     }
                 });
     }
-
 
     /**
      *
@@ -145,17 +138,15 @@ public class Map extends AppCompatActivity implements OnInfoWindowClickListener 
             mMap.addMarker(new MarkerOptions().position(currentLocation)
                     .title(title)
                     .snippet(snippet));
-            String s = Float.toString(lat);
-            s = s+",";
-            s = s + Float.toString(lng);
-            s = s+",";
-            s = s + title;
-            s = s+",";
-            s = s + snippet;
             if(dbBool == true) {
                 DatabaseReference myRef = database.getReference("Sparks");
                 String key = myRef.push().getKey();
-                myRef.child(key).setValue(s);
+                Spark insert = new Spark();
+                insert.setpLat(Float.toString(lat));
+                insert.setpLng(Float.toString(lng));
+                insert.setpSnippet(snippet);
+                insert.setpTitle(title);
+                myRef.child(key).setValue(insert);
             }
         }
         else {
@@ -184,7 +175,7 @@ public class Map extends AppCompatActivity implements OnInfoWindowClickListener 
             mMap.setMyLocationEnabled(true);
             mMap.getUiSettings().setMapToolbarEnabled(false);
             mMap.getUiSettings().setMyLocationButtonEnabled(false);
-            //refreshSparks();
+            refreshSparks();
             firstRun = false;
         }
         mFusedLocationClient.getLastLocation()
@@ -202,6 +193,7 @@ public class Map extends AppCompatActivity implements OnInfoWindowClickListener 
                     }
                 });
     }
+
     public void createSpark() {
         Toast.makeText(mainActivity, "Create Spark", Toast.LENGTH_SHORT).show();
         FusedLocationProviderClient mFusedLocationClient = mLocation.getFusedLocationClient();
