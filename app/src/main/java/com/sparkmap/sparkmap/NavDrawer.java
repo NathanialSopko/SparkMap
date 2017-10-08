@@ -1,32 +1,36 @@
 package com.sparkmap.sparkmap;
 
-import android.app.Activity;
+import android.content.Intent;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
-
-import com.google.android.gms.maps.SupportMapFragment;
+import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * Created by Nate on 9/14/2017.
+ * Written by Paul
  */
 
 public class NavDrawer  extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-    Activity activity;
+    MainActivity _activity;
     private Location myLocation;
     private FAB myFab;
 
 
-    public NavDrawer(Activity activity, Location passedLocation, FAB passedFab){
+
+    public NavDrawer(MainActivity activity, Location passedLocation, FAB passedFab){
         myLocation = passedLocation;
         myFab = passedFab;
-        this.activity=activity;
+        _activity= activity;
         Toolbar toolbar = (Toolbar) activity.findViewById(R.id.toolbar);
         ((AppCompatActivity) activity).setSupportActionBar( toolbar);
         //setSupportActionBar(toolbar); //this was the original call from the onCreate method but I switched it to use this activity passed in
@@ -80,29 +84,37 @@ public class NavDrawer  extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
-
         int id = item.getItemId();
+        DrawerLayout drawer = (DrawerLayout) _activity.findViewById(R.id.drawer_layout);
+        mainTools mapStuff = _activity.getMainTools();
+        CharSequence text="";
+        int duration = Toast.LENGTH_LONG;
 
         if (id == R.id.nav_map) {
-            System.out.print("for lecture");
-
-
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
+            drawer.closeDrawers();
+        } else if (id == R.id.nav_prof) {
+            text = "  User Profile\nComing Soon!";
+            Toast toast = toast = Toast.makeText(mapStuff.getContext(), text, duration);
+            toast.setGravity(Gravity.CENTER, 0, 0);
+            toast.show();
         } else if (id == R.id.nav_manage) {
-
+            text = "      Tools\nComing Soon!";
+            Toast toast = toast = Toast.makeText(mapStuff.getContext(), text, duration);
+            toast.setGravity(Gravity.CENTER, 0, 0);
+            toast.show();
         } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
+            _activity.doEmail(true);
+        }else if (id == R.id.nav_contact) {
+            _activity.doEmail(false);
         }
 
-        DrawerLayout drawer = (DrawerLayout) activity.findViewById(R.id.drawer_layout);
+
         drawer.closeDrawer(GravityCompat.START);
 
 
         return true;
     }
+
+
+
 }
