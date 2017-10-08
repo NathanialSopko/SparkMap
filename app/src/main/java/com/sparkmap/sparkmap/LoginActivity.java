@@ -169,6 +169,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         // ...
                     }
                 });
+        attemptLogin();
     }
 
     private void attemptLogin() {
@@ -327,7 +328,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         private final String mEmail;
         private final String mPassword;
-        private Boolean auth;
+        public Integer auth = null;
 
         UserLoginTask(String email, String password) {
             mEmail = email;
@@ -345,31 +346,38 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                                 // Sign in success, update UI with the signed-in user's information
                                 Log.d(TAG, "signInWithEmail:success");
                                 FirebaseUser user = mAuth.getCurrentUser();
-                                //Toast.makeText(LoginActivity.this, "Authentication Successful.", Toast.LENGTH_SHORT).show();
-                                auth = true;
+                                Toast.makeText(LoginActivity.this, "Authentication Successful.", Toast.LENGTH_SHORT).show();
+                                auth = 1;
                             } else {
                                 // If sign in fails, display a message to the user.
                                 Log.w(TAG, "signInWithEmail:failure", task.getException());
-                                //Toast.makeText(LoginActivity.this, "Authentication Failure.", Toast.LENGTH_SHORT).show();
-                                auth = false;
+                                Toast.makeText(LoginActivity.this, "Authentication Failure.", Toast.LENGTH_SHORT).show();
+                                auth = 0;
                             }
                             // ...
                         }
                     });
-
             try {
-                // Simulate network access.
-                Thread.sleep(2000);
+                // Simulate network access. Switch to 4000-5000 to account for emulator lag. 2000 default.
+                while(auth == null){
+                    Thread.sleep(1);
+                }
             } catch (InterruptedException e) {
                 return false;
             }
 
-            if(auth){
-                return true;
+            if(auth != null){
+                if(auth == 1){
+                    return true;
+                }
+                else{
+                    return false;
+                }
+
             }
-            else{
-                return false;
-            }
+            //Will only reach this if authentication takes too long
+            Toast.makeText(LoginActivity.this, "Authentication Timeout.", Toast.LENGTH_SHORT).show();
+            return false;
         }
 
 
