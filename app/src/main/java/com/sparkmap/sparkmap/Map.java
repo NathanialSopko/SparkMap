@@ -105,7 +105,7 @@ public class Map extends AppCompatActivity implements OnInfoWindowClickListener 
      * all of the others on the screen currently
      */
 
-    public void refreshSparks(){
+    public void refreshSparks(final boolean checkIfLoggingIn){
         mMap.clear();
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("Sparks");
         ref.addListenerForSingleValueEvent(
@@ -115,11 +115,16 @@ public class Map extends AppCompatActivity implements OnInfoWindowClickListener 
                         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                             parseSpark(snapshot.getValue(Spark.class));
                         }
-                        Toast.makeText(mainActivity,"Sparks refreshed!", Toast.LENGTH_SHORT).show();
+                        if(checkIfLoggingIn == true){
+                            Toast.makeText(mainActivity,"Sparks refreshed!", Toast.LENGTH_SHORT).show();
+                        }
+
                     }
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
-                        Toast.makeText(mainActivity,"Unable to load Sparks.", Toast.LENGTH_SHORT).show();
+                        if(checkIfLoggingIn ==true) {
+                            Toast.makeText(mainActivity, "Unable to load Sparks.", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 });
     }
@@ -174,6 +179,7 @@ public class Map extends AppCompatActivity implements OnInfoWindowClickListener 
      */
 
     public void centerCam(){
+        boolean toggle = false;
         FusedLocationProviderClient mFusedLocationClient = mLocation.getFusedLocationClient();
         if (ActivityCompat.checkSelfPermission(mainActivity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(mainActivity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -186,9 +192,11 @@ public class Map extends AppCompatActivity implements OnInfoWindowClickListener 
             mMap.setMyLocationEnabled(true);
             mMap.getUiSettings().setMapToolbarEnabled(false);
             mMap.getUiSettings().setMyLocationButtonEnabled(false);
-            refreshSparks();
+            refreshSparks(false);
+            toggle = true;
             firstRun = false;
         }
+        final boolean finalToggle = toggle;
         mFusedLocationClient.getLastLocation()
                 .addOnSuccessListener(mainActivity, new OnSuccessListener<android.location.Location>() {
                     @Override
@@ -199,9 +207,14 @@ public class Map extends AppCompatActivity implements OnInfoWindowClickListener 
                             LatLng CurrentLocation = new LatLng(lat, lng);
                             float zoomLevel = (float) 14.0;
                             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(CurrentLocation, zoomLevel));
+                            if(finalToggle == false){
+                                Toast.makeText(mainActivity, "Camera Centered on Location!", Toast.LENGTH_SHORT).show();
+                            }
                         }
                         else{
-                            Toast.makeText(mainActivity,"Unable to center camera on current location.", Toast.LENGTH_SHORT).show();
+                            if(finalToggle ==false) {
+                                Toast.makeText(mainActivity, "Unable to center camera on current location.", Toast.LENGTH_SHORT).show();
+                            }
                         }
                     }
                 });

@@ -37,7 +37,7 @@ public class FAB extends FragmentActivity {
         });
         floatingActionButton2.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                mapClass.refreshSparks();
+                mapClass.refreshSparks(true);
             }
         });
         floatingActionButton3.setOnClickListener(new View.OnClickListener() {
