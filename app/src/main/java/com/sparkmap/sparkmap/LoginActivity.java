@@ -97,7 +97,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
         });
 
-        Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
+        final Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
         final CheckBox newUserCheckBox = (CheckBox) findViewById(R.id.isNewUserCheckBox);
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
@@ -105,7 +105,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 if(!newUserCheckBox.isChecked()) {
                     attemptLogin();
                 }else{
-                    attemptNewUser();
+                    attemptNewUser(newUserCheckBox, mEmailSignInButton);
                 }
             }
         });
@@ -149,8 +149,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * Attempts to sign in or register the account specified by the login form.
      * If there are form errors (invalid email, missing fields, etc.), the
      * errors are presented and no actual login attempt is made.
+     * @param newUserCheckBox
+     * @param mEmailSignInButton
      */
-    private void attemptNewUser(){
+    private void attemptNewUser(CheckBox newUserCheckBox, Button mEmailSignInButton){
         //Update the UI to reflect a new user being created successfully
         String email = mEmailView.getText().toString();
         String password = mPasswordView.getText().toString();
@@ -171,7 +173,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         // ...
                     }
                 });
-        //attemptLogin();
+
+        newUserCheckBox.toggle();
+        mEmailSignInButton.performClick();
     }
 
     private void attemptLogin() {
