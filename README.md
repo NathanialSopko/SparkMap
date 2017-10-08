@@ -17,8 +17,7 @@ For Developers:<br />
 15)Now you will be testing on your own branch off of develop and will be able to add functionality as you please.<br />
 <br />
 For Users:<br />
-1)Download the sparkmap.apk(https://drive.google.com/file/d/0B4a4hUxiH47PUURMUWZtQzRRa0E/view?usp=sharing<br />
+1)Download the sparkmap.apk(https://drive.google.com/open?id=0B_Hs2sIRWxz1VmxjU2JNY0s1LUU)<br />
 2)Once the .apk has finished downloading install the app on your phone<br />
 3)Once installed, it is required that you go to Settings > Applications > SparkMap and allow location services
 4)Then run the app<br />
-5)To login enter the email "paul@gmail.com" and the password "password"<br />
