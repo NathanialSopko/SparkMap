@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         if(isShare) {
             emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Check out SparkMap!");
             emailIntent.putExtra(Intent.EXTRA_TEXT, "Go check out this brand new social media called SparkMap! Rather than a lame linear timeline, " +
-                    "you can post and views post to a map and see whats going on around you!");
+                    "you can Spark and view other Sparks on a map to see whats going on around you!\n Click the below url to download the app!\n goo.gl/dDZMra \n\n -Your friend, \n");
             emailIntent.setType("text/plain");
         }else{
             emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[] {"sparkmap.team@gmail.com"});
