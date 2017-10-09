@@ -229,8 +229,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     }
 
     private boolean isEmailValid(String email) {
-        //TODO
-        return email.contains("@gmail.com");
+        //todo
+        //Just checks if follows right "something"@"something".com format, need to verify email in future
+        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 
     private boolean isPasswordValid(String password) {
