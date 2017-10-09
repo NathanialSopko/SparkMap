@@ -20,6 +20,7 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -105,6 +106,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 if(!newUserCheckBox.isChecked()) {
                     attemptLogin();
                 }else{
+                    isNewUser = true;
                     attemptNewUser(newUserCheckBox, mEmailSignInButton);
                 }
             }
@@ -352,8 +354,32 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                                 // Sign in success, update UI with the signed-in user's information
                                 Log.d(TAG, "signInWithEmail:success");
                                 FirebaseUser user = mAuth.getCurrentUser();
-                                Toast.makeText(LoginActivity.this, "Authentication Successful.", Toast.LENGTH_SHORT).show();
+                                if(!isNewUser) {
+                                    Toast.makeText(LoginActivity.this, "Authentication Successful.", Toast.LENGTH_SHORT).show();
+                                }
                                 auth = 1;
+                                if(isNewUser) {
+                                    //welcome text
+                                    CharSequence text_welcome = "Welcome to SparkMap!";
+                                    int duration = Toast.LENGTH_SHORT;
+                                    Toast toast_welcome = Toast.makeText(getApplicationContext(), text_welcome, duration);
+                                    toast_welcome.setGravity(Gravity.CENTER_HORIZONTAL, 0, -100);
+                                    toast_welcome.show();
+
+                                    //tools text
+                                    duration = Toast.LENGTH_LONG;
+                                    CharSequence text_tools = " Click here to reveal map tools -->";
+                                    Toast toast_tools = Toast.makeText(getApplicationContext(), text_tools, duration);
+                                    toast_tools.setGravity(Gravity.BOTTOM | Gravity.CENTER, -50, 100);
+                                    toast_tools.show();
+
+                                    duration = Toast.LENGTH_LONG;
+                                    CharSequence text_nav = " ^ Click here to reveal the drawer";
+                                    Toast toast_nav = Toast.makeText(getApplicationContext(), text_nav, duration);
+                                    toast_nav.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT, 0, -650);
+                                    toast_nav.show();
+
+                                }
                             } else {
                                 // If sign in fails, display a message to the user.
                                 Log.w(TAG, "signInWithEmail:failure", task.getException());
