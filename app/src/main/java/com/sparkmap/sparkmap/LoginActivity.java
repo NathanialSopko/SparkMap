@@ -61,7 +61,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      */
     private UserLoginTask mAuthTask = null;
     private Boolean isNewUser = false;
-
+    private Boolean notValid = false;
+    private boolean cancel = false;
 
     // UI references.
     private AutoCompleteTextView mEmailView;
@@ -158,26 +159,44 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         //Update the UI to reflect a new user being created successfully
         String email = mEmailView.getText().toString();
         String password = mPasswordView.getText().toString();
-        mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, "createUserWithEmail:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            Toast.makeText(LoginActivity.this, "Account created successfully.", Toast.LENGTH_SHORT).show();
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                            Toast.makeText(LoginActivity.this, "Account creation failure.", Toast.LENGTH_SHORT).show();
-                        }
-                        // ...
-                    }
-                });
+        View focusView = checkValid(email, password);
 
-        newUserCheckBox.toggle();
-        mEmailSignInButton.performClick();
+        if(cancel){
+            cancel = false;
+            focusView.requestFocus();
+        }else {
+            mAuth.createUserWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                // Sign in success, update UI with the signed-in user's information
+                                Log.d(TAG, "createUserWithEmail:success");
+                                FirebaseUser user = mAuth.getCurrentUser();
+                                Toast.makeText(LoginActivity.this, "Account created successfully, Please verify your email before logging in.", Toast.LENGTH_SHORT).show();
+                                //FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                                user.sendEmailVerification()
+                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                if (task.isSuccessful()) {
+                                                    Log.d(TAG, "Email sent.");
+                                                }
+                                            }
+                                        });
+                            } else {
+                                // If sign in fails, display a message to the user.
+                                Log.w(TAG, "createUserWithEmail:failure", task.getException());
+                                Toast.makeText(LoginActivity.this, "Account creation failure.", Toast.LENGTH_SHORT).show();
+                            }
+                            // ...
+                        }
+                    });
+
+
+            //newUserCheckBox.toggle();
+            //mEmailSignInButton.performClick();
+        }
     }
 
     private void attemptLogin() {
@@ -193,11 +212,34 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         String email = mEmailView.getText().toString();
         String password = mPasswordView.getText().toString();
 
-        boolean cancel = false;
-        View focusView = null;
+
+        View focusView = checkValid(email, password);
 
         // Check for a valid password, if the user entered one.
-        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
+
+
+        if (cancel) {
+            // There was an error; don't attempt login and focus the first
+            // form field with an error.
+            cancel = false;
+            focusView.requestFocus();
+        } else {
+            // Show a progress spinner, and kick off a background task to
+            // perform the user login attempt.
+            showProgress(true);
+            mAuthTask = new UserLoginTask(email, password);
+            mAuthTask.execute((Void) null);
+
+        }
+    }
+
+    private View checkValid(String email, String password){
+        View focusView = null;
+        if(TextUtils.isEmpty(password)){
+            mPasswordView.setError(getString(R.string.error_invalid_password));
+            focusView = mPasswordView;
+            cancel = true;
+        }else if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
             mPasswordView.setError(getString(R.string.error_invalid_password));
             focusView = mPasswordView;
             cancel = true;
@@ -213,24 +255,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             focusView = mEmailView;
             cancel = true;
         }
-
-        if (cancel) {
-            // There was an error; don't attempt login and focus the first
-            // form field with an error.
-            focusView.requestFocus();
-        } else {
-            // Show a progress spinner, and kick off a background task to
-            // perform the user login attempt.
-            showProgress(true);
-            mAuthTask = new UserLoginTask(email, password);
-            mAuthTask.execute((Void) null);
-
-        }
+        return focusView;
     }
 
+
     private boolean isEmailValid(String email) {
-        //TODO
-        return email.contains("@gmail.com");
+        //todo
+        //Just checks if follows right "something"@"something".com format, need to verify email in future
+        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 
     private boolean isPasswordValid(String password) {
@@ -354,11 +386,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                                 // Sign in success, update UI with the signed-in user's information
                                 Log.d(TAG, "signInWithEmail:success");
                                 FirebaseUser user = mAuth.getCurrentUser();
-                                if(!isNewUser) {
-                                    Toast.makeText(LoginActivity.this, "Authentication Successful.", Toast.LENGTH_SHORT).show();
-                                }
                                 auth = 1;
-                                if(isNewUser) {
+                                if(isNewUser && user != null) {
                                     //welcome text
                                     CharSequence text_welcome = "Welcome to SparkMap!";
                                     int duration = Toast.LENGTH_SHORT;
@@ -399,13 +428,20 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
 
             if(auth != null){
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 if(auth == 1){
-                    return true;
+                    if(user != null && user.isEmailVerified()) {
+                        return true;
+                    }
+                    else {
+                        //Toast.makeText(LoginActivity.this, "Verify your email before logging in.", Toast.LENGTH_SHORT).show();
+                        notValid = true;
+                        return false;
+                    }
                 }
                 else{
                     return false;
                 }
-
             }
             //Will only reach this if authentication takes too long
             Toast.makeText(LoginActivity.this, "Authentication Timeout.", Toast.LENGTH_SHORT).show();
@@ -421,7 +457,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             if (success) {
                 new User(mEmail);
                 finish();
-            } else {
+            }
+            else if(notValid){
+                mEmailView.setError(getString(R.string.error_nonvalid_email));
+                mEmailView.requestFocus();
+            }
+            else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
                 mPasswordView.setText("");
                 mPasswordView.requestFocus();
