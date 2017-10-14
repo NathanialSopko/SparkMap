@@ -192,9 +192,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                             // ...
                         }
                     });
-
-
-            //newUserCheckBox.toggle();
+            newUserCheckBox.toggle();
             //mEmailSignInButton.performClick();
         }
     }
