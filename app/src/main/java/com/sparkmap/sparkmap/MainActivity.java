@@ -1,16 +1,13 @@
 package com.sparkmap.sparkmap;
 
 
-import android.*;
-import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
+import android.support.design.widget.NavigationView;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -18,12 +15,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
-    static int MY_PERMISSIONS_REQUEST_ACCESS__FINE_LOCATION = 101;
     SupportMapFragment supportMapFragment;
     Location myLocation;
     GoogleMap mMap;
     android.support.v4.app.FragmentManager sFM;
-    private String username;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,8 +34,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         //myRef.setValue("Hello, World!");
 
         //begin login activity
-        Intent logInt = new Intent(this, LoginActivity.class);
-        startActivity(logInt);
+//        Intent logInt = new Intent(this, LoginActivity.class);
+//        startActivity(logInt);
 
 
 
@@ -70,6 +65,21 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         return new mainTools(sFM, supportMapFragment, getApplicationContext());
     }
 
+    public void doProfile(NavDrawer navDrawer){
+        if (findViewById(R.id.prof_fragment_container) != null) {
+
+
+            //hide the map frag
+
+            getSupportFragmentManager().beginTransaction().hide(supportMapFragment).commit();
+
+            // Create a new Fragment to be placed in the activity layout
+            ProfileFragment profileFragment = new ProfileFragment();
+            // Add the fragment to the FrameLayout
+            getSupportFragmentManager().beginTransaction().replace(R.id.prof_fragment_container, profileFragment).addToBackStack(null).commit();
+        }
+
+    }
     public void doEmail(Boolean isShare) {
         Intent emailIntent = new Intent(Intent.ACTION_SEND);
 

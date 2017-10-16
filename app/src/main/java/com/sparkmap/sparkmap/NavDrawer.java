@@ -93,10 +93,7 @@ public class NavDrawer  extends AppCompatActivity
         if (id == R.id.nav_map) {
             drawer.closeDrawers();
         } else if (id == R.id.nav_prof) {
-            text = "  User Profile\nComing Soon!";
-            Toast toast = toast = Toast.makeText(mapStuff.getContext(), text, duration);
-            toast.setGravity(Gravity.CENTER, 0, 0);
-            toast.show();
+            _activity.doProfile(this);
         } else if (id == R.id.nav_manage) {
             text = "      Tools\nComing Soon!";
             Toast toast = toast = Toast.makeText(mapStuff.getContext(), text, duration);
@@ -110,6 +107,7 @@ public class NavDrawer  extends AppCompatActivity
 
 
         drawer.closeDrawer(GravityCompat.START);
+       // getSupportFragmentManager().beginTransaction().show(mapStuff.getFragSupp()).commit();
 
 
         return true;
