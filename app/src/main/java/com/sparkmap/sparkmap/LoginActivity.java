@@ -50,13 +50,6 @@ import static android.Manifest.permission.READ_CONTACTS;
 public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
 
     /**
-     * A dummy authentication store containing known user names and passwords.
-     * TODO: remove after connecting to a real authentication system.
-     */
-    //private static final String[] DUMMY_CREDENTIALS = new String[]{
-    //        "paul@gmail.com:password"
-    //};
-    /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
     private UserLoginTask mAuthTask = null;
@@ -70,7 +63,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private View mProgressView;
     private View mLoginFormView;
 
-    //Firebase vars
+    //Firebase variables
     private FirebaseAuth mAuth; //FirebaseAuth Object
     private FirebaseAuth.AuthStateListener mAuthListener; //AuthStateListener object
 
@@ -84,7 +77,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
         populateAutoComplete();
 
-        //firebase
+        //Initializing the firebaseauth object
         mAuth = FirebaseAuth.getInstance();
 
         mPasswordView = (EditText) findViewById(R.id.password);
@@ -117,7 +110,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
 
-        //firebase
+        //Authstatelistener method, tracks whenever the user signs in or out
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -134,7 +127,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
         };
     }
-    //On start (Firebase)
+    //Attaches the firebaseauth instance when the activity is started
     @Override
     public void onStart() {
         super.onStart();
@@ -165,16 +158,17 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             cancel = false;
             focusView.requestFocus();
         }else {
+            //Firebase method to create a new user and add the user to our app's firebase online console
             mAuth.createUserWithEmailAndPassword(email, password)
                     .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
-                                // Sign in success, update UI with the signed-in user's information
+                                //Account creation successful, Prompt the user to verify their email address before logging in
                                 Log.d(TAG, "createUserWithEmail:success");
                                 FirebaseUser user = mAuth.getCurrentUser();
                                 Toast.makeText(LoginActivity.this, "Account created successfully, Please verify your email before logging in.", Toast.LENGTH_SHORT).show();
-                                //FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                                //Method to send verification email to newly minted account
                                 user.sendEmailVerification()
                                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
@@ -185,7 +179,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                                             }
                                         });
                             } else {
-                                // If sign in fails, display a message to the user.
+                                // If account creation, display a message to the user.
                                 Log.w(TAG, "createUserWithEmail:failure", task.getException());
                                 Toast.makeText(LoginActivity.this, "Account creation failure.", Toast.LENGTH_SHORT).show();
                             }
@@ -363,9 +357,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * the user.
      */
     private class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
-
+        //Entered email and password
         private final String mEmail;
         private final String mPassword;
+        //Variable to determine if authentication was successful 0=failure 1=success
         public Integer auth = null;
 
         UserLoginTask(String email, String password) {
@@ -375,16 +370,17 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            // Firebase attempt authentication against a network service.
+            // Firebase attempt login authentication against a network service.
             mAuth.signInWithEmailAndPassword(mEmail, mPassword)
                     .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
-                                // Sign in success, update UI with the signed-in user's information
+                                // Sign in success, grant the user access to the application
                                 Log.d(TAG, "signInWithEmail:success");
                                 FirebaseUser user = mAuth.getCurrentUser();
                                 auth = 1;
+                                //If its the user's first time logging in, display tutorial text
                                 if(isNewUser && user != null) {
                                     //welcome text
                                     CharSequence text_welcome = "Welcome to SparkMap!";
@@ -417,14 +413,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         }
                     });
             try {
-                // Simulate network access. Switch to 4000-5000 to account for emulator lag. 2000 default.
+                //Busy wait for 1ms until the authentication process is complete
                 while(auth == null){
                     Thread.sleep(1);
                 }
             } catch (InterruptedException e) {
                 return false;
             }
-
+            //Final check on what to return to onPostExecute, if a user is validated and authenticated log them in, deny them otherwise
             if(auth != null){
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 if(auth == 1){
@@ -432,7 +428,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         return true;
                     }
                     else {
-                        //Toast.makeText(LoginActivity.this, "Verify your email before logging in.", Toast.LENGTH_SHORT).show();
                         notValid = true;
                         return false;
                     }
@@ -441,7 +436,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     return false;
                 }
             }
-            //Will only reach this if authentication takes too long
+            //Return false by default, this code will only be reached if there is some kind of error
             Toast.makeText(LoginActivity.this, "Authentication Timeout.", Toast.LENGTH_SHORT).show();
             return false;
         }
@@ -456,6 +451,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 new User(mEmail);
                 finish();
             }
+            //If a user hasn't validated their email address print this error message
             else if(notValid){
                 mEmailView.setError(getString(R.string.error_nonvalid_email));
                 mEmailView.requestFocus();
@@ -481,7 +477,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         */
     }
 
-    //firebase on stop
+    //Removes the firebaseauth instance when the activity is closed
     @Override
     public void onStop() {
         super.onStop();
