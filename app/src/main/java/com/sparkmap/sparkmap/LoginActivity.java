@@ -380,8 +380,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                                 Log.d(TAG, "signInWithEmail:success");
                                 FirebaseUser user = mAuth.getCurrentUser();
                                 auth = 1;
-                                //If its the user's first time logging in, display tutorial text
-                                if(isNewUser && user != null) {
+                                //If its the user's first time logging in, display tutorial text (And user is verified)
+                                if(isNewUser && user != null && user.isEmailVerified()) {
                                     //welcome text
                                     CharSequence text_welcome = "Welcome to SparkMap!";
                                     int duration = Toast.LENGTH_SHORT;
