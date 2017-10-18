@@ -127,7 +127,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
         };
     }
-    //Attaches the firebaseauth instance when the activity is started
+    //Attaches the firebaseauth instance when the activity is started.
     @Override
     public void onStart() {
         super.onStart();
