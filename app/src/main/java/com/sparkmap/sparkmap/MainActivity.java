@@ -61,29 +61,40 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         myLocation = new Location(this, mMap);//Creates an instance of the Location class that adds the map/creates location functions to/for the main activity
     }
 
+    //Creates mapTools class. Used in navdrawer for various things, may be less neccessary now.
     public mainTools getMainTools(){
         return new mainTools(sFM, supportMapFragment, getApplicationContext());
     }
 
+    /*******************************************
+     *Fragment methods, all called from navDrawer. Have to be in here since this activity is their parent
+     *******************************************
+     */
+
+    //loads profile fragment
     public void doProfile(NavDrawer navDrawer){
         if (findViewById(R.id.prof_fragment_container) != null) {
-
-
-            //hide the map frag
-
-            getSupportFragmentManager().beginTransaction().hide(supportMapFragment).commit();
-
-            // Create a new Fragment to be placed in the activity layout
             ProfileFragment profileFragment = new ProfileFragment();
-            // Add the fragment to the FrameLayout
+            //hide the map frag
+             mapFragShow(false);
+            //replace view with profile fragment
             getSupportFragmentManager().beginTransaction().replace(R.id.prof_fragment_container, profileFragment).addToBackStack(null).commit();
+        }
+    }
+
+    //hides or shows the mapFrag based on arguement
+    public void mapFragShow(Boolean show) {
+        if(!show) {
+            sFM.beginTransaction().hide(supportMapFragment).commit();
+        }else{
+            sFM.beginTransaction().show(supportMapFragment).commit();
         }
 
     }
+
+    //For sharing, will either automate an email to us, our to a friend depending on input. This is also called from NavDrawer
     public void doEmail(Boolean isShare) {
         Intent emailIntent = new Intent(Intent.ACTION_SEND);
-
-        //emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[] {"pauldege@buffalo.edu"});
         if(isShare) {
             emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Check out SparkMap!");
             emailIntent.putExtra(Intent.EXTRA_TEXT, "Go check out this brand new social media called SparkMap! Rather than a lame linear timeline, " +
@@ -101,6 +112,20 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         } catch (android.content.ActivityNotFoundException ex) {
             Toast.makeText(this,"There was an error.", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    /*This will show the mapFrag and get rid of another fragment on top of the mapFrag.
+     *If the mapFrag is already showing, thats fine, it the back key will act as normal.
+     */
+    @Override
+    public void onBackPressed() {
+        if (getFragmentManager().getBackStackEntryCount() == 0) {
+            mapFragShow(true);
+            super.onBackPressed();
+        } else {
+            getFragmentManager().popBackStack();
         }
 
     }

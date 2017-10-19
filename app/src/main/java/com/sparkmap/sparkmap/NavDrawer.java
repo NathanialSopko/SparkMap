@@ -10,8 +10,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.TextView;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 /**
@@ -49,7 +48,7 @@ public class NavDrawer  extends AppCompatActivity
     public void onBackPressed() {
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
+        if (drawer.isDrawerOpen(GravityCompat.START)){
             drawer.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
@@ -87,13 +86,18 @@ public class NavDrawer  extends AppCompatActivity
         int id = item.getItemId();
         DrawerLayout drawer = (DrawerLayout) _activity.findViewById(R.id.drawer_layout);
         mainTools mapStuff = _activity.getMainTools();
+
         CharSequence text="";
         int duration = Toast.LENGTH_LONG;
 
+        ProfileFragment pf = null;
+
         if (id == R.id.nav_map) {
+
             drawer.closeDrawers();
         } else if (id == R.id.nav_prof) {
-            _activity.doProfile(this);
+           _activity.doProfile(this);
+
         } else if (id == R.id.nav_manage) {
             text = "      Tools\nComing Soon!";
             Toast toast = toast = Toast.makeText(mapStuff.getContext(), text, duration);
@@ -107,12 +111,8 @@ public class NavDrawer  extends AppCompatActivity
 
 
         drawer.closeDrawer(GravityCompat.START);
-       // getSupportFragmentManager().beginTransaction().show(mapStuff.getFragSupp()).commit();
-
+       // getSupportFragmentManager().beginTransaction().show(mapStuff.getFragSupp()).commit()
 
         return true;
     }
-
-
-
 }
