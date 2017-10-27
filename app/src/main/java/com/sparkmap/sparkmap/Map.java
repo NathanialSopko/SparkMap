@@ -141,6 +141,11 @@ public class Map extends AppCompatActivity implements OnInfoWindowClickListener 
      *                 If the bool is true it then adds a Spark object to the databsae and uses the server time to be the random key
      */
     public void addMapMarker(float lat, float lng, String title, String snippet, boolean dbBool){
+        if(dbBool) {
+            while (mLocation.checkLocationEnabled() == false) {
+                mLocation.makeSureLocationOn();
+            }
+        }
         LatLng currentLocation = new LatLng(lat, lng);
         if(currentLocation != null && title.length() !=0 && snippet.length()!=0){
             mMap.addMarker(new MarkerOptions().position(currentLocation)
@@ -180,6 +185,9 @@ public class Map extends AppCompatActivity implements OnInfoWindowClickListener 
 
     public void centerCam(){
         boolean toggle = false;
+        while (mLocation.checkLocationEnabled() == false) {
+            mLocation.makeSureLocationOn();
+        }
         FusedLocationProviderClient mFusedLocationClient = mLocation.getFusedLocationClient();
         if (ActivityCompat.checkSelfPermission(mainActivity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(mainActivity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -231,6 +239,9 @@ public class Map extends AppCompatActivity implements OnInfoWindowClickListener 
 
     public void createSpark() {
         Toast.makeText(mainActivity, "Create Spark", Toast.LENGTH_SHORT).show();
+        while (mLocation.checkLocationEnabled() == false) {
+            mLocation.makeSureLocationOn();
+        }
         FusedLocationProviderClient mFusedLocationClient = mLocation.getFusedLocationClient();
         if (ActivityCompat.checkSelfPermission(mainActivity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(mainActivity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
