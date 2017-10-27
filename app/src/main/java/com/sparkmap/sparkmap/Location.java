@@ -39,11 +39,22 @@ public class Location extends AppCompatActivity {
      *
      * If they are not there is a simple message sent to the user
      */
-
+    public boolean checkLocationEnabled(){
+        final LocationManager manager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
+        if(manager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+            return false;
+        }
+        else{
+            return true;
+        }
+    }
     public void makeSureLocationOn() {
         final LocationManager manager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
 
-        if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+       // if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+        //    buildAlertMessageNoGps();
+        //}
+        if(!checkLocationEnabled()){
             buildAlertMessageNoGps();
         }
     }
