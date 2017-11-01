@@ -256,10 +256,49 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         //Just checks if follows right "something"@"something".com format, need to verify email in future
         return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
+    private boolean containUppercase(String password) {
+        for (int i = 0; i < password.length(); i++) {
+            char ch = password.charAt(i);
+            if (ch >= 65 || ch <= 90) {
+                return true;
+            }
+        }
+        return false;
+    }
 
+    private boolean containnumber(String password){
+        for(int i=0; i<password.length();i++){
+            char ch= password.charAt(i);
+            if(ch>=48||ch<= 57) {
+                return true;
+            }
+        }
+        return false;
+    }
+    private boolean containsymbol(String password) {
+
+        for (int i = 0; i < password.length(); i++) {
+            char ch = password.charAt(i);
+            if (ch >= 33 || ch <= 47) {
+                return true;
+            }
+        }
+        return false;
+    }
     private boolean isPasswordValid(String password) {
-        //TODO
-        return password.length() > 4;
+        if (password.length() < 6) {
+            return false;
+        }
+        if(containUppercase(password)==false) {
+            return false;
+        }
+        if(containnumber(password)==false) {
+            return false;
+        }
+        if(containsymbol(password)==false) {
+            return false;
+        }
+        return true;
     }
 
     /**
