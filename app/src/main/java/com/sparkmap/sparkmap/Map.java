@@ -53,6 +53,7 @@ public class Map extends AppCompatActivity implements OnInfoWindowClickListener 
     public Map(GoogleMap passedMap, Location passedLocation, MainActivity passedActivity){
         mMap = passedMap;
         mLocation = passedLocation;
+        //hi
         mMap.setOnInfoWindowClickListener(this);
         mainActivity = passedActivity;
         database = FirebaseDatabase.getInstance();
@@ -142,12 +143,12 @@ public class Map extends AppCompatActivity implements OnInfoWindowClickListener 
      */
     public void addMapMarker(float lat, float lng, String title, String snippet, boolean dbBool){
         if(dbBool) {
-            while (mLocation.checkLocationEnabled() == false) {
+            if (!mLocation.checkLocationEnabled()) {
                 mLocation.makeSureLocationOn();
             }
         }
         LatLng currentLocation = new LatLng(lat, lng);
-        if(currentLocation != null && title.length() !=0 && snippet.length()!=0){
+        if(currentLocation != null || title.length() !=0 || snippet.length()!=0){
             mMap.addMarker(new MarkerOptions().position(currentLocation)
                     .title(title)
                     .snippet(snippet));
@@ -164,6 +165,7 @@ public class Map extends AppCompatActivity implements OnInfoWindowClickListener 
         }
         else {
             if (currentLocation == null) {
+                mLocation.buildAlertMessageNoGps();
                 Toast.makeText(mainActivity, "Location cannot be determined.", Toast.LENGTH_SHORT).show();
             } else if (title.length() == 0) {
                 Toast.makeText(mainActivity, "Title cannot be empty.", Toast.LENGTH_SHORT).show();
@@ -185,8 +187,10 @@ public class Map extends AppCompatActivity implements OnInfoWindowClickListener 
 
     public void centerCam(){
         boolean toggle = false;
-        while (mLocation.checkLocationEnabled() == false) {
-            mLocation.makeSureLocationOn();
+        if(firstRun == false) {
+            if (!mLocation.checkLocationEnabled()) {
+                mLocation.makeSureLocationOn();
+            }
         }
         FusedLocationProviderClient mFusedLocationClient = mLocation.getFusedLocationClient();
         if (ActivityCompat.checkSelfPermission(mainActivity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(mainActivity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -220,6 +224,7 @@ public class Map extends AppCompatActivity implements OnInfoWindowClickListener 
                             }
                         }
                         else{
+                            mLocation.buildAlertMessageNoGps();
                             if(finalToggle ==false) {
                                 Toast.makeText(mainActivity, "Unable to center camera on current location.", Toast.LENGTH_SHORT).show();
                             }
@@ -239,7 +244,7 @@ public class Map extends AppCompatActivity implements OnInfoWindowClickListener 
 
     public void createSpark() {
         Toast.makeText(mainActivity, "Create Spark", Toast.LENGTH_SHORT).show();
-        while (mLocation.checkLocationEnabled() == false) {
+        if (!mLocation.checkLocationEnabled()) {
             mLocation.makeSureLocationOn();
         }
         FusedLocationProviderClient mFusedLocationClient = mLocation.getFusedLocationClient();
@@ -292,6 +297,9 @@ public class Map extends AppCompatActivity implements OnInfoWindowClickListener 
                                 }
                             });
                             builder.show();
+                        }
+                        else{
+                            mLocation.buildAlertMessageNoGps();
                         }
                     }
                 });
