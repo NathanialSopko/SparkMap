@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
      *******************************************
      */
 
-    //loads profile fragment
+    /*loads profile fragment
     public void doProfile(NavDrawer navDrawer){
         if (findViewById(R.id.prof_fragment_container) != null) {
             ProfileFragment profileFragment = new ProfileFragment();
@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             //replace view with profile fragment
             getSupportFragmentManager().beginTransaction().replace(R.id.prof_fragment_container, profileFragment).addToBackStack(null).commit();
         }
-    }
+    }*/
 
     //hides or shows the mapFrag based on arguement
     public void mapFragShow(Boolean show) {

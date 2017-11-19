@@ -91,7 +91,7 @@ public class NavDrawer  extends AppCompatActivity
         CharSequence text="";
         int duration = Toast.LENGTH_LONG;
 
-        ProfileFragment pf = null;
+        //ProfileFragment pf = null;
 
         if (id == R.id.nav_map) {
             _activity.goToSite();
