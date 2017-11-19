@@ -1,6 +1,7 @@
 package com.sparkmap.sparkmap;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -93,26 +94,23 @@ public class NavDrawer  extends AppCompatActivity
         ProfileFragment pf = null;
 
         if (id == R.id.nav_map) {
-
-            drawer.closeDrawers();
-        } else if (id == R.id.nav_prof) {
+            _activity.goToSite();
+            //drawer.closeDrawers();
+        } /*else if (id == R.id.nav_prof) {
            _activity.doProfile(this);
 
         } else if (id == R.id.nav_manage) {
             text = "      Tools\nComing Soon!";
             Toast toast = toast = Toast.makeText(mapStuff.getContext(), text, duration);
             toast.setGravity(Gravity.CENTER, 0, 0);
-            toast.show();
-        } else if (id == R.id.nav_share) {
+            toast.show(); } */
+         else if (id == R.id.nav_share) {
             _activity.doEmail(true);
         }else if (id == R.id.nav_contact) {
             _activity.doEmail(false);
         }
 
-
         drawer.closeDrawer(GravityCompat.START);
-       // getSupportFragmentManager().beginTransaction().show(mapStuff.getFragSupp()).commit()
-
         return true;
     }
 }

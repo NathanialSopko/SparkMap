@@ -5,6 +5,7 @@ import android.*;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -160,4 +161,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         sFM.beginTransaction().replace(R.id.map, supportMapFragment).commit();
     }
 
+    public void goToSite() {
+        String url = "https://natesopko798.github.io";
+        Intent i = new Intent(Intent.ACTION_VIEW);
+        i.setData(Uri.parse(url));
+        startActivity(i);
+    }
 }
