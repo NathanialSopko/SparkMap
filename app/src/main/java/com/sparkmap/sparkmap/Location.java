@@ -26,7 +26,7 @@ public class Location extends AppCompatActivity {
 
     public Location(MainActivity passedactivity, GoogleMap googleMap) {
         this.activity = passedactivity;
-        makeSureLocationOn();
+        //makeSureLocationOn();
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(activity);
         mMap = googleMap;
         mapClass = new Map(mMap, this, passedactivity);
@@ -39,19 +39,21 @@ public class Location extends AppCompatActivity {
      *
      * If they are not there is a simple message sent to the user
      */
-
-    public void makeSureLocationOn() {
+    public boolean checkLocationEnabled(){
         final LocationManager manager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
-
-        if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+        return manager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+    }
+    public void makeSureLocationOn() {
+        if(checkLocationEnabled()){
             buildAlertMessageNoGps();
         }
     }
 
+
     /**
      * This alert is sent to the user if location is not available
      */
-    private void buildAlertMessageNoGps() {
+    public void buildAlertMessageNoGps() {
         final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setMessage("Please enable your location for SparkMap. Thank you!")
                 .setCancelable(false)

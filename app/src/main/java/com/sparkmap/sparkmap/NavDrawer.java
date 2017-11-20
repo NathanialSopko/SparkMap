@@ -1,6 +1,7 @@
 package com.sparkmap.sparkmap;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -10,8 +11,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.TextView;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 /**
@@ -49,7 +49,7 @@ public class NavDrawer  extends AppCompatActivity
     public void onBackPressed() {
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
+        if (drawer.isDrawerOpen(GravityCompat.START)){
             drawer.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
@@ -87,34 +87,30 @@ public class NavDrawer  extends AppCompatActivity
         int id = item.getItemId();
         DrawerLayout drawer = (DrawerLayout) _activity.findViewById(R.id.drawer_layout);
         mainTools mapStuff = _activity.getMainTools();
+
         CharSequence text="";
         int duration = Toast.LENGTH_LONG;
 
+        //ProfileFragment pf = null;
+
         if (id == R.id.nav_map) {
-            drawer.closeDrawers();
-        } else if (id == R.id.nav_prof) {
-            text = "  User Profile\nComing Soon!";
-            Toast toast = toast = Toast.makeText(mapStuff.getContext(), text, duration);
-            toast.setGravity(Gravity.CENTER, 0, 0);
-            toast.show();
+            _activity.goToSite();
+            //drawer.closeDrawers();
+        } /*else if (id == R.id.nav_prof) {
+           _activity.doProfile(this);
+
         } else if (id == R.id.nav_manage) {
             text = "      Tools\nComing Soon!";
             Toast toast = toast = Toast.makeText(mapStuff.getContext(), text, duration);
             toast.setGravity(Gravity.CENTER, 0, 0);
-            toast.show();
-        } else if (id == R.id.nav_share) {
+            toast.show(); } */
+         else if (id == R.id.nav_share) {
             _activity.doEmail(true);
         }else if (id == R.id.nav_contact) {
             _activity.doEmail(false);
         }
 
-
         drawer.closeDrawer(GravityCompat.START);
-
-
         return true;
     }
-
-
-
 }
