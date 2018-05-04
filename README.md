@@ -1,4 +1,10 @@
 # SparkMap
+## About
+SparkMap is an Android Application written in Java geared towards providing a location based social media application that is both open to the public and unrestricted in terms of privacy.
+
+Create an account with our service and start posting immediately, as well as seeing all posts on a map around your location to see what is going on nearby!
+
+## Contribution
 For Developers:<br />
 1)Download android studios<br />
 2)Go to the VCS tab<br />
